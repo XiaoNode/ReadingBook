@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shao Family Library | 我们一起读世界</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Noto+Serif+SC:wght@400;700&family=Quicksand:wght@500;700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Vue 2 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        :root {
+            --primary-bg: #0f172a;
+            /* Deep tech blue */
+            --text-main: #f8fafc;
+            --text-light: #94a3b8;
+
+            /* Family Colors - Neon Edition */
+            --color-jone: #00d2ff;
+            --color-jone-glow: rgba(0, 210, 255, 0.4);
+            --color-candy: #ff00f7;
+            --color-candy-glow: rgba(255, 0, 247, 0.4);
+            --color-eric: #00ff87;
+            --color-eric-glow: rgba(0, 255, 135, 0.4);
+
+            --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --radius-main: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Quicksand', 'Noto Serif SC', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            background:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(253, 16%, 7%, 1) 0, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        @keyframes meshGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            33% {
+                transform: translateY(-6px) rotate(1deg);
+            }
+
+            66% {
+                transform: translateY(4px) rotate(-1deg);
+            }
+
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+        }
+
+        /* --- Header Section --- */
+        header {
+            text-align: center;
+            padding: 3rem 1rem 2rem;
+            position: relative;
+        }
+
+        .slogan {
+            font-family: 'Fredoka', cursive;
+            font-size: 5rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            letter-spacing: -2px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 10px 20px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .sub-slogan {
+            font-size: 1.6rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 4rem;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 1s ease-out 0.2s backwards;
+        }
+
+        /* Family Circle */
+        .family-hub {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        /* Connecting line background */
+        .family-hub::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-jone), var(--color-eric), var(--color-candy));
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .member-avatar {
+            font-size: 45px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Stagger animations for a natural feel */
+        .member-wrapper:nth-child(1) .member-avatar {
+            animation-duration: 4s;
+            animation-delay: 0s;
+        }
+
+        .member-wrapper:nth-child(2) .member-avatar {
+            animation-duration: 4.5s;
+            animation-delay: 1.5s;
+        }
+
+        .member-wrapper:nth-child(3) .member-avatar {
+            animation-duration: 3.8s;
+            animation-delay: 0.8s;
+        }
+
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .member-emoji {
+            font-size: 2.5rem;
+        }
+
+        .member-avatar span {
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: none;
+            /* replaced by tooltip style logic if needed, or keeping simple */
+        }
+
+        .member-avatar.active,
+        .member-avatar:hover {
+            transform: scale(1.15) translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            animation-play-state: paused;
+            /* Pause floating when interacting */
+        }
+
+        .member-avatar:active {
+            transform: scale(0.95);
+        }
+
+        .member-avatar[data-id="jone"] {
+            border-color: var(--color-jone);
+            color: var(--color-jone);
+        }
+
+        .member-avatar[data-id="candy"] {
+            border-color: var(--color-candy);
+            color: var(--color-candy);
+        }
+
+        .member-avatar[data-id="eric"] {
+            border-color: var(--color-eric);
+            color: var(--color-eric);
+        }
+
+        .member-avatar[data-id="all"] {
+            border-color: #95a5a6;
+            color: #95a5a6;
+            background: #fff;
+        }
+
+        .member-label {
+            position: absolute;
+            bottom: -30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .member-wrapper:hover .member-label {
+            opacity: 1;
+            bottom: -25px;
+        }
+
+        .member-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- Controls --- */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            transition: 0.3s;
+            color: #fff;
+        }
+
+        .filter-btn:active {
+            transform: scale(0.95);
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-all.active {
+            background: #95a5a6;
+        }
+
+        .btn-jone.active {
+            background: var(--color-jone);
+        }
+
+        .btn-candy.active {
+            background: var(--color-candy);
+        }
+
+        .btn-eric.active {
+            background: var(--color-eric);
+        }
+
+        /* --- Book Grid --- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem;
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem 0;
+            align-items: start;
+        }
+
+        /* Book Card */
+        .book-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-main);
+            padding: 2.2rem;
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            color: #fff;
+        }
+
+        .book-card:hover {
+            transform: translateY(-20px) scale(1.06) rotate(3deg) !important;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .card-jone:hover {
+            box-shadow: 0 20px 40px var(--color-jone-glow);
+        }
+
+        .card-candy:hover {
+            box-shadow: 0 20px 40px var(--color-candy-glow);
+        }
+
+        .card-eric:hover {
+            box-shadow: 0 20px 40px var(--color-eric-glow);
+        }
+
+        .book-card::before {
+            display: none;
+            /* Remove old shadow element */
+        }
+
+        /* Person Themes on Cards */
+        .card-jone {
+            border-top-color: var(--color-jone);
+            background: linear-gradient(180deg, #fff 0%, #fff 80%, var(--color-jone-light) 100%);
+        }
+
+        .card-candy {
+            border-top-color: var(--color-candy);
+            background: linear-gradient(180deg, #fff 0%, #fff 80%, var(--color-candy-light) 100%);
+        }
+
+        .card-eric {
+            border-top-color: var(--color-eric);
+            background: linear-gradient(180deg, #fff 0%, #fff 80%, var(--color-eric-light) 100%);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .badge-jone {
+            background: var(--color-jone-light);
+            color: var(--color-jone);
+        }
+
+        .badge-candy {
+            background: var(--color-candy-light);
+            color: var(--color-candy);
+        }
+
+        .badge-eric {
+            background: var(--color-eric-light);
+            color: var(--color-eric);
+        }
+
+        .date-badge {
+            font-size: 0.85rem;
+            color: #999;
+            font-weight: 600;
+        }
+
+        .book-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .book-author {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .thoughts-preview {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.85);
+            flex-grow: 1;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-actions {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #eee;
+            text-align: right;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.3s;
+        }
+
+        .toggle-btn:active {
+            transform: scale(0.95);
+        }
+
+        .toggle-btn:hover {
+            color: var(--text-main);
+        }
+
+        /* Expanded Content */
+        .thoughts-full {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            font-style: italic;
+            border-left: 3px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Reader Modal Overlay --- */
+        .reader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .reader-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .reader-container {
+            width: 100vw;
+            height: 100vh;
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 8rem 10% 4rem;
+            position: relative;
+            overflow-y: auto;
+            transform: scale(1.1);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .reader-overlay.active .reader-container {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .reader-close {
+            position: fixed;
+            top: 4rem;
+            right: 4rem;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s;
+            z-index: 2100;
+        }
+
+        .reader-close:hover {
+            background: #fff;
+            color: #0f172a;
+            transform: rotate(180deg);
+        }
+
+        .reader-body {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.8rem;
+            line-height: 2;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 6rem;
+            column-count: 3;
+            column-gap: 8rem;
+            column-rule: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: justify;
+        }
+
+        /* Adjust columns for smaller screens */
+        @media (max-width: 1600px) {
+            .reader-body {
+                column-count: 2;
+                column-gap: 5rem;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .reader-body {
+                column-count: 1;
+                font-size: 1.4rem;
+            }
+
+            .reader-container {
+                padding: 6rem 5% 2rem;
+            }
+
+            .reader-close {
+                top: 2rem;
+                right: 2rem;
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        .reader-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2rem;
+            line-height: 1.1;
+            text-align: center;
+        }
+
+        .reader-author {
+            color: var(--text-light);
+            font-size: 1.8rem;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .reader-meta {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .reader-body::before {
+            content: "“";
+            position: absolute;
+            top: -2rem;
+            left: -3rem;
+            font-size: 8rem;
+            color: rgba(0, 0, 0, 0.05);
+            font-family: Georgia, serif;
+        }
+
+        /* Responsive Reader */
+        @media (max-width: 768px) {
+            .reader-container {
+                padding: 2.5rem 1.5rem;
+                width: 95%;
+            }
+
+            .reader-title {
+                font-size: 2rem;
+            }
+
+            .reader-body {
+                font-size: 1.1rem;
+                line-height: 1.8;
+            }
+
+            .reader-meta {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .reader-close {
+                top: 1rem;
+                right: 1rem;
+            }
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+            }
+        }
+
+        /* List Transitions */
+        .list-enter-active,
+        .list-leave-active {
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .list-leave-active {
+            position: absolute;
+            /* Ensures smooth removal flow */
+            width: 100%;
+            /* Keeps layout stable during leave */
+            max-width: 320px;
+            /* Match grid minmax */
+        }
+
+        .list-enter,
+        .list-leave-to {
+            opacity: 0;
+            transform: translateY(30px) scale(0.9);
+        }
+
+        .list-move {
+            transition: transform 0.6s;
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .family-hub {
+                gap: 1rem;
+            }
+
+            .member-avatar {
+                width: 60px;
+                height: 60px;
+            }
+
+            .member-emoji {
+                font-size: 1.8rem;
+            }
+
+            .slogan {
+                font-size: 1.8rem;
+            }
+
+            .sub-slogan {
+                font-size: 1rem;
+            }
+
+            /* Hide the connecting line on small screens if it looks messy */
+            .family-hub::before {
+                width: 150px;
+            }
+        }
+
+        /* Cute background elements */
+        .decoration {
+            position: fixed;
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Floating Decorations -->
+        <div class="decoration" style="top: 15%; left: 8%; font-size: 3rem; animation-delay: 0s;">📚</div>
+        <div class="decoration" style="top: 25%; right: 12%; font-size: 2.5rem; animation-delay: 2s;">✨</div>
+        <div class="decoration" style="top: 70%; left: 5%; font-size: 2rem; animation-delay: 4s;">💡</div>
+        <div class="decoration" style="top: 80%; right: 8%; font-size: 3rem; animation-delay: 1.5s;">🌱</div>
+
+        <!-- Header -->
+        <header>
+            <h1 class="slogan">Reading Log</h1>
+            <p class="sub-slogan">"我们一起读世界"</p>
+
+            <div class="family-hub">
+                <div class="member-wrapper" v-for="m in members" :key="m.id" @click="setFilter(m.id)">
+                    <div class="member-avatar" :class="{ active: currentFilter === m.id }" :data-id="m.id">
+                        <!-- <img :src="m.avatar" :alt="m.name"> -->
+                        {{m.avatar}}
+                    </div>
+                    <div class="member-label" :style="{ color: m.color }">{{ m.name }}</div>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="filter-btn btn-all" :class="{ active: currentFilter === 'all' }"
+                    @click="setFilter('all')">
+                    <i class="fas fa-layer-group"></i> 全部
+                </button>
+                <button v-for="m in members" :key="'btn-'+m.id" class="filter-btn"
+                    :class="['btn-'+m.id, { active: currentFilter === m.id }]" @click="setFilter(m.id)">
+                    <i class="fas fa-user-circle"></i> {{ m.name }}
+                </button>
+            </div>
+        </header>
+        <!-- Main Content -->
+        <main class="container">
+
+            <!-- Summary Stats Board (Optional visual) -->
+            <div style="text-align: right; margin-bottom: 1rem; color: #aaa; font-size: 0.9rem;">
+                共记录 <b>{{ filteredBooks.length }}</b> 本书
+            </div>
+            <transition-group name="list" tag="div" class="book-grid">
+                <div v-for="book in filteredBooks" :key="book.id" class="book-card" :class="'card-' + book.memberId">
+                    <div class="card-header">
+                        <div class="badge" :class="'badge-' + book.memberId">
+                            <i class="fas fa-book-reader"></i> {{ getMemberName(book.memberId) }}
+                        </div>
+                        <div class="date-badge">
+                            <i class="far fa-calendar-alt"></i> {{ book.date }}
+                        </div>
+                    </div>
+                    <div class="book-title">{{ book.title }}</div>
+                    <div class="book-author"><i class="fas fa-pen-nib"></i> {{ book.author }}</div>
+                    <div class="thoughts-preview">
+                        {{ book.content.substring(0, 80) }}...
+                    </div>
+                    <div class="card-actions">
+                        <button class="toggle-btn" @click="toggleExpand(book)">
+                            点击阅读心得
+                            <i class="fas fa-external-link-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </transition-group>
+            <!-- Empty State -->
+            <div v-if="filteredBooks.length === 0" style="text-align: center; padding: 4rem; color: #ccc;">
+                <i class="fas fa-book-open" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <p>这个月还没有记录哦，快去读书吧！</p>
+            </div>
+        </main>
+
+        <!-- Reader Modal Overlay -->
+        <div class="reader-overlay" :class="{ active: isModalOpen }" @click.self="closeModal">
+            <div class="reader-container" :class="'theme-' + selectedBook?.memberId">
+                <button class="reader-close" @click="closeModal"><i class="fas fa-times"></i></button>
+
+                <div v-if="selectedBook">
+                    <div class="reader-header">
+                        <div class="reader-meta">
+                            <span
+                                :style="{ color: selectedBook.memberId === 'jone' ? 'var(--color-jone)' : (selectedBook.memberId === 'candy' ? 'var(--color-candy)' : 'var(--color-eric)') }">
+                                <i class="fas fa-user"></i> {{ getMemberName(selectedBook.memberId) }}
+                            </span>
+                            <span class="date-badge"><i class="far fa-calendar-alt"></i> {{ selectedBook.date }}</span>
+                        </div>
+                        <h2 class="reader-title">{{ selectedBook.title }}</h2>
+                        <div class="reader-author"><i class="fas fa-pen-nib"></i> {{ selectedBook.author }}</div>
+                    </div>
+
+                    <div class="reader-body">
+                        {{ selectedBook.content }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            &copy; 2026 Shao Family Library. Designed with ❤️ using Vue.js.
+        </footer>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                currentFilter: 'all',
+                isModalOpen: false,
+                selectedBook: null,
+                members: [
+                    { id: 'jone', name: 'Papa Jone', role: '爸爸', color: '#3498db', avatar: '👨' },
+                    { id: 'candy', name: 'Mama Candy', role: '妈妈', color: '#e056fd', avatar: '👩' },
+                    { id: 'eric', name: 'Boy Eric', role: '儿子', color: '#2ecc71', avatar: '👦' }
+                ],
+                books: [
+                    // Jone's Books
+                    {
+                        id: 101, memberId: 'jone', title: '金钱心理学', author: '摩根·豪泽尔', date: '2026-01', content: `人的金钱观、价值观形成是和所在的成长环境密切相关的，经历过大萧条的人不再轻易相信股票，经历过大繁荣时期的人无法理解老人不投资。
+
+穷人买彩票是买梦想，绝大多数买彩票的人是穷人。
+
+以自己拥有和需要的东西为赌注冒险，希望获得自己没有也不需要的东西，这种行为毫无道理。
+
+攀比就像一场没有人能打赢的战役，取胜的唯一办法是根本不要加入这场战争——用知足的态度接受一切，即使这意味着自己比周围的人逊色。
+
+成功的投资并不需要你一直做出成功的决定。你只要做到一直不把事情搞砸就够了。
+
+单品投资里有“尾事件主导成功”，宽指没有，只需要坚持。
+
+时间自由是财富能带给你的最大红利。
+
+炫富是让财富流失的最快途径。
+
+想真变得富有，唯一的途径就是别去消耗你拥有的财富。这不仅仅是积累财富的唯一方式，也是富有的真正定义。
+
+在时间和选择方面的更大控制权已经成了当今世界最有价值的通行货币之一。--这个世界有太多聪明人，在互联网全球化的今天，他们都是竞争对手，但不是所有人都有这些金钱、储蓄的认知。
+
+“选择合乎情理的，而非绝对理性的”——在做关于金钱的决定时，更多人应该好好考虑一下这个道理。
+
+原文总结：
+
+虚荣越少，财富越多。
+
+现实中的最佳投资方案一定是能让我们晚上睡得安稳的方案。
+
+如果你想提高投资回报，最简单而有效的方法就是拉长时间。时间是投资中最强大的力量。它能让微不足道的事物成长壮大，而让重大错误的影响渐渐消失。它不能抵消运气和风险，但它会让结果对参与者而言更公平。
+
+就算很多事出了错，也不要心态失衡。
+
+利用财富来获取对时间的掌控。
+
+存钱。存就是了。存钱不需要什么特定理由。为了车、首付或突发疾病存钱自然是好事，但为那些无法预测或定义的事物也是存钱的最佳理由之一。每个人的生命都是由一连串意外组成的。在生命中最糟糕的时刻，没有特定用途的丰厚储蓄可以为不可避免的意外提供一种对冲。
+
+明确成功需要付出的代价。
+
+避免设定极端的财务目标。
+
+你应该喜欢风险，因为长期看它能带给你回报。但你需要对具有毁灭性的风险格外敏感，因为它会让你早早退场，不再有机会去冒那些能带给你回报的风险。
+
+获得一定程度的生活自主性并不需要你拿到医生那么高的薪水。最主要的秘诀是控制你的欲望，在能力范围内尽可能节俭地生活。
+
+...我们永远不想被迫出售我们持有的股票。我们希望在面对一笔巨大的开支时，能把不得不卖出股票来凑钱的可能性降到零...
+
+...而且我认为，对大多数投资者来说，用平均成本法  去投资低成本的指数基金将是长线投资成功率最高的选择...（定投良好的低成本宽指基金）
+`, expanded: false
+                    },
+
+                    // Candy's Books
+                    { id: 201, memberId: 'candy', title: 'Nonviolent Communication', author: 'Marshall B. Rosenberg', date: '2026-01', content: '学会倾听内心的需求，而不是评判。在家庭教育中非常适用，当我们生气时，试着去表达感受（我感到难过），而不是指责（你太不听话了）。推荐全家一起实践！', expanded: false },
+                    // Eric's Books
+                    { id: 301, memberId: 'eric', title: 'Harry Potter and the Sorcerer\'s Stone', author: 'J.K. Rowling', date: '2026-01', content: '这简直太酷了！我也想去霍格沃茨上学！最喜欢赫敏，因为她什么都知道。虽然伏地魔很可怕，但只要有朋友在身边，我就不害怕。', expanded: false },
+
+                ]
+            },
+            computed: {
+                filteredBooks() {
+                    let list = this.books;
+                    if (this.currentFilter !== 'all') {
+                        list = list.filter(b => b.memberId === this.currentFilter);
+                    }
+                    // Sort by date descending (simple string compare for YYYY-MM works)
+                    return list.sort((a, b) => b.date.localeCompare(a.date));
+                }
+            },
+            methods: {
+                setFilter(id) {
+                    this.currentFilter = id;
+                    this.animateGrid();
+                },
+                getMemberName(id) {
+                    const member = this.members.find(m => m.id === id);
+                    return member ? member.role + ' ' + member.name : '';
+                },
+                toggleExpand(book) {
+                    this.selectedBook = book;
+                    this.isModalOpen = true;
+                    this.$nextTick(() => {
+                        this.animateModalIn();
+                    });
+                },
+                closeModal() {
+                    this.animateModalOut(() => {
+                        this.isModalOpen = false;
+                        this.selectedBook = null;
+                    });
+                },
+                animateModalIn() {
+                    const timeline = anime.timeline({
+                        easing: 'easeOutQuint'
+                    });
+
+                    timeline
+                        .add({
+                            targets: '.reader-container',
+                            translateY: [100, 0],
+                            opacity: [0, 1],
+                            scale: [0.9, 1],
+                            duration: 1000
+                        })
+                        .add({
+                            targets: '.reader-header > *',
+                            translateY: [20, 0],
+                            opacity: [0, 1],
+                            delay: anime.stagger(150),
+                            duration: 800
+                        }, '-=600')
+                        .add({
+                            targets: '.reader-body',
+                            translateY: [30, 0],
+                            opacity: [0, 1],
+                            duration: 1000
+                        }, '-=600');
+                },
+                animateModalOut(callback) {
+                    anime({
+                        targets: '.reader-container',
+                        translateY: [0, 50],
+                        opacity: [1, 0],
+                        scale: [1, 0.9],
+                        duration: 500,
+                        easing: 'easeInQuint',
+                        complete: callback
+                    });
+                },
+                animateGrid() {
+                    // Using Anime.js for a quick stagger effect on the new list
+                    // We use setTimeout to wait for Vue to render the new DOM
+                    setTimeout(() => {
+                        anime({
+                            targets: '.book-card',
+                            translateY: [20, 0],
+                            opacity: [0, 1],
+                            delay: anime.stagger(100),
+                            easing: 'easeOutQuad',
+                            duration: 500
+                        });
+                    }, 50);
+                }
+            },
+            mounted() {
+                // Intro animation
+                anime({
+                    targets: '.member-avatar',
+                    scale: [0, 1],
+                    opacity: [0, 1],
+                    delay: anime.stagger(150),
+                    easing: 'spring(1, 80, 10, 0)'
+                });
+
+                this.animateGrid();
+            }
+        });
+    </script>
+</body>
+
+</html>
