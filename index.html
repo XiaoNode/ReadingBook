@@ -542,24 +542,18 @@
             line-height: 2;
             color: rgba(255, 255, 255, 0.9);
             margin-top: 6rem;
-            column-count: 3;
-            column-gap: 8rem;
-            column-rule: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: justify;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            white-space: pre-wrap;
+            position: relative;
         }
 
-        /* Adjust columns for smaller screens */
-        @media (max-width: 1600px) {
+        @media (max-width: 1200px) {
             .reader-body {
-                column-count: 2;
-                column-gap: 5rem;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .reader-body {
-                column-count: 1;
                 font-size: 1.4rem;
+                padding: 0 2rem;
             }
 
             .reader-container {
@@ -571,6 +565,10 @@
                 right: 2rem;
                 width: 60px;
                 height: 60px;
+            }
+
+            .reader-title {
+                font-size: 3rem;
             }
         }
 
