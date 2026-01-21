@@ -20,7 +20,7 @@
             --primary-bg: #0f172a;
             /* Deep tech blue */
             --text-main: #f8fafc;
-            --text-light: #94a3b8;
+            --text-light: #fff;
 
             /* Family Colors - Neon Edition */
             --color-jone: #00d2ff;
@@ -106,6 +106,7 @@
 
         .sub-slogan {
             font-size: 1.6rem;
+            font-weight: bold;
             color: rgba(255, 255, 255, 0.8);
             margin-bottom: 4rem;
             font-weight: 300;
@@ -320,9 +321,10 @@
             padding: 2.2rem;
             position: relative;
             transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             color: #fff;
+            cursor: pointer;
         }
 
         .book-card:hover {
@@ -368,12 +370,12 @@
         .card-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 1rem;
         }
 
         .badge {
-            font-size: 0.8rem;
+            font-size: 1rem;
             padding: 0.3rem 0.8rem;
             border-radius: 20px;
             font-weight: 700;
@@ -400,7 +402,7 @@
 
         .date-badge {
             font-size: 0.85rem;
-            color: #999;
+            color: #fff;
             font-weight: 600;
         }
 
@@ -542,7 +544,7 @@
             line-height: 2;
             color: rgba(255, 255, 255, 0.9);
             margin-top: 6rem;
-            max-width: 1000px;
+            max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
             text-align: left;
@@ -696,7 +698,7 @@
         footer {
             text-align: center;
             padding: 2rem;
-            color: #aaa;
+            color: #fff;
             font-size: 0.9rem;
             margin-top: auto;
         }
@@ -782,7 +784,7 @@
                 共记录 <b>{{ filteredBooks.length }}</b> 本书
             </div>
             <transition-group name="list" tag="div" class="book-grid">
-                <div v-for="book in filteredBooks" :key="book.id" class="book-card" :class="'card-' + book.memberId">
+                <div v-for="book in filteredBooks" :key="book.id" class="book-card" :class="'card-' + book.memberId" @click="toggleExpand(book)">
                     <div class="card-header">
                         <div class="badge" :class="'badge-' + book.memberId">
                             <i class="fas fa-book-reader"></i> {{ getMemberName(book.memberId) }}
@@ -797,7 +799,7 @@
                         {{ book.content.substring(0, 80) }}...
                     </div>
                     <div class="card-actions">
-                        <button class="toggle-btn" @click="toggleExpand(book)">
+                        <button class="toggle-btn">
                             点击阅读心得
                             <i class="fas fa-external-link-alt"></i>
                         </button>
