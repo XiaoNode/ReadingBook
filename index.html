@@ -15,6 +15,10 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
     <!-- Anime.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <!-- JSZip (Required for epub.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Epub.js -->
+    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
     <style>
         :root {
             --primary-bg: #0f172a;
@@ -324,7 +328,7 @@
             border: 3px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             color: #fff;
-            cursor: pointer;
+            /* cursor: pointer; */
         }
 
         .book-card:hover {
@@ -612,6 +616,55 @@
             font-family: Georgia, serif;
         }
 
+        /* --- Ebook Reader --- */
+        #epub-render-area {
+            width: 100%;
+            height: 60vh;
+            background: #fff;
+            border-radius: 8px;
+            margin: 2rem 0;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .ebook-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding: 0 1rem;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .clickable-title {
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .clickable-title:hover {
+            color: var(--color-jone);
+            /* Default hover color, can be dynamic */
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
         /* Responsive Reader */
         @media (max-width: 768px) {
             .reader-container {
@@ -784,7 +837,7 @@
                 共记录 <b>{{ filteredBooks.length }}</b> 本书
             </div>
             <transition-group name="list" tag="div" class="book-grid">
-                <div v-for="book in filteredBooks" :key="book.id" class="book-card" :class="'card-' + book.memberId" @click="toggleExpand(book)">
+                <div v-for="book in filteredBooks" :key="book.id" class="book-card" :class="'card-' + book.memberId">
                     <div class="card-header">
                         <div class="badge" :class="'badge-' + book.memberId">
                             <i class="fas fa-book-reader"></i> {{ getMemberName(book.memberId) }}
@@ -793,13 +846,17 @@
                             <i class="far fa-calendar-alt"></i> {{ book.date }}
                         </div>
                     </div>
-                    <div class="book-title">{{ book.title }}</div>
+                    <div class="book-title" :class="{'clickable-title': book.bookAddress}"
+                        @click="book.bookAddress ? openBook(book) : null" :title="book.bookAddress ? '点击阅读电子书' : ''">
+                        {{ book.title }} <i v-if="book.bookAddress" class="fas fa-book-open"
+                            style="font-size: 0.6em; vertical-align: middle; opacity: 0.6;"></i>
+                    </div>
                     <div class="book-author"><i class="fas fa-pen-nib"></i> {{ book.author }}</div>
                     <div class="thoughts-preview">
                         {{ book.content.substring(0, 80) }}...
                     </div>
                     <div class="card-actions">
-                        <button class="toggle-btn">
+                        <button class="toggle-btn" @click="toggleExpand(book)">
                             点击阅读心得
                             <i class="fas fa-external-link-alt"></i>
                         </button>
@@ -831,8 +888,31 @@
                         <div class="reader-author"><i class="fas fa-pen-nib"></i> {{ selectedBook.author }}</div>
                     </div>
 
-                    <div class="reader-body">
+                    <div v-if="!isEbookMode" class="reader-body">
                         {{ selectedBook.content }}
+                    </div>
+
+                    <div v-else-if="loadError" class="reader-body" style="text-align: center; font-size: 1.2rem;">
+                        <i class="fas fa-exclamation-triangle"
+                            style="font-size: 3rem; color: #ffeb3b; margin-bottom: 1rem;"></i>
+                        <p>抱歉，无法直接在当前环境加载电子书。</p>
+                        <p style="font-size: 1rem; opacity: 0.7; margin-top: 0.5rem;">由于浏览器安全限制，本地文件模式(file://)无法加载电子书。
+                        </p>
+                        <p style="font-size: 1rem; opacity: 0.7;">请尝试使用 "VS Code Live Server" 运行，或直接下载/打开：</p>
+
+                        <a :href="'./bookstore/' + selectedBook.bookAddress" target="_blank" class="nav-btn"
+                            style="display: inline-flex; margin-top: 2rem; justify-content: center;">
+                            <i class="fas fa-download"></i> 直接打开文件
+                        </a>
+                    </div>
+
+                    <div v-else>
+                        <div id="epub-render-area"></div>
+                        <div class="ebook-controls">
+                            <button class="nav-btn" @click="prevPage"><i class="fas fa-chevron-left"></i> 上一页</button>
+                            <span style="opacity: 0.6; font-size: 0.9rem;">{{ selectedBook.title }}</span>
+                            <button class="nav-btn" @click="nextPage">下一页 <i class="fas fa-chevron-right"></i></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -848,6 +928,10 @@
                 currentFilter: 'all',
                 isModalOpen: false,
                 selectedBook: null,
+                isEbookMode: false,
+                loadError: false,
+                rendition: null,
+                bookInstance: null,
                 members: [
                     { id: 'jone', name: 'Papa Jone', role: '爸爸', color: '#3498db', avatar: '👨' },
                     { id: 'candy', name: 'Mama Candy', role: '妈妈', color: '#e056fd', avatar: '👩' },
@@ -903,7 +987,8 @@
 ...我们永远不想被迫出售我们持有的股票。我们希望在面对一笔巨大的开支时，能把不得不卖出股票来凑钱的可能性降到零...
 
 ...而且我认为，对大多数投资者来说，用平均成本法  去投资低成本的指数基金将是长线投资成功率最高的选择...（定投良好的低成本宽指基金）
-`, expanded: false
+`, expanded: false,
+                        bookAddress: '美 查理·芒格 & - 穷查理宝典：查理·芒格的智慧箴言录 (2010, 上海人民出版社) - libgen.li.epub'
                     },
 
                     // Candy's Books
@@ -934,15 +1019,87 @@
                 },
                 toggleExpand(book) {
                     this.selectedBook = book;
+                    this.isEbookMode = false;
                     this.isModalOpen = true;
                     this.$nextTick(() => {
                         this.animateModalIn();
                     });
                 },
+                openBook(book) {
+                    this.selectedBook = book;
+                    this.isEbookMode = true;
+                    this.isModalOpen = true;
+                    this.$nextTick(() => {
+                        this.animateModalIn();
+                        // Small delay to ensure container is rendered and sized
+                        setTimeout(() => this.initEpub(), 300);
+                    });
+                },
+                initEpub() {
+                    if (!this.selectedBook || !this.selectedBook.bookAddress) return;
+
+                    this.loadError = false;
+
+                    if (this.bookInstance) {
+                        this.bookInstance.destroy();
+                    }
+
+                    // Check protocol
+                    if (window.location.protocol === 'file:') {
+                        console.warn("Running on file:// protocol, ebook rendering might fail due to CORS.");
+                    }
+
+                    // Assuming bookstore folder is at root and contains the files
+                    // Using encodeURIComponent only for special chars, but keeping path structure
+                    const url = './bookstore/' + encodeURIComponent(this.selectedBook.bookAddress);
+                    console.log("Opening Ebook:", url);
+
+                    try {
+                        this.bookInstance = ePub(url);
+                        this.rendition = this.bookInstance.renderTo("epub-render-area", {
+                            width: "100%",
+                            height: "100%",
+                            flow: "scrolled-doc"
+                        });
+
+                        // Hook into errors
+                        this.bookInstance.ready.catch(err => {
+                            console.error("Book loading failed:", err);
+                            this.loadError = true;
+                        });
+
+                        // Load the book
+                        this.rendition.display().catch(err => {
+                            console.error("Rendition display failed:", err);
+                            this.loadError = true;
+                        });
+
+                        // Optional: Hook into key events
+                        this.rendition.on("keyup", (e) => {
+                            if (e.keyCode === 37) this.rendition.prev();
+                            if (e.keyCode === 39) this.rendition.next();
+                        });
+                    } catch (e) {
+                        console.error("Epub Init Error:", e);
+                        this.loadError = true;
+                    }
+                },
+                prevPage() {
+                    if (this.rendition) this.rendition.prev();
+                },
+                nextPage() {
+                    if (this.rendition) this.rendition.next();
+                },
                 closeModal() {
                     this.animateModalOut(() => {
                         this.isModalOpen = false;
                         this.selectedBook = null;
+                        this.isEbookMode = false;
+                        if (this.bookInstance) {
+                            this.bookInstance.destroy();
+                            this.bookInstance = null;
+                            this.rendition = null;
+                        }
                     });
                 },
                 animateModalIn() {
